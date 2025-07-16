@@ -125,19 +125,19 @@ bash dist_train.sh configs/DELIVER/Segformer_MMSAM_adapter_large_DELIVER_1024x10
 To evaluate MM SAM-Adapter + Segformer head on DeLiVER test set on a single node with 1 gpu run:
 ```
 cd segmentation
-bash dist_test.sh configs/DELIVER/Segformer_MMSAM_adapter_large_DELIVER_1024x1024_ss_RGBLIDAR.py /path/to/checkpoint_file 1 --eval mIoU --show-dir /visualization_directory --resize-dim 1024 1024 #resize-dim is (800,600) in case of FMB
+bash dist_test.sh configs/DELIVER/Segformer_MMSAM_adapter_large_DELIVER_1024x1024_ss_RGBLIDAR.py /path/to/checkpoint_file 1 --eval mIoU --show-dir visualization_directory --resize-dim 1024 1024 #resize-dim is (800,600) in case of FMB
 ```
 To evaluate MM SAM-Adapter + Segformer head on DeLiVER test set in easy/hard split on a single node with 2 gpus run. In order to do this kind of evaluation it is needed to change the test dict within the config file specifying the type of dataset needed, i.e. DELIVER_easy:
 ```
 cd segmentation
-bash dist_test.sh configs/Segformer_MMSAM_adapter_large_DELIVER_1024x1024_ss_RGBLIDAR_easy.py /path/to/checkpoint_file 1 --eval mIoU --show-dir /visualization_directory --resize-dim 1024 1024 #resize-dim is (800,600) in case of FMB
+bash dist_test.sh configs/DELIVER/Segformer_MMSAM_adapter_large_DELIVER_1024x1024_ss_RGBLIDAR_easy.py /path/to/checkpoint_file 1 --eval mIoU --show-dir visualization_directory --resize-dim 1024 1024 #resize-dim is (800,600) in case of FMB
 ```
 
 ### :rocket: Infer of MUSES test set
 
 ```
 cd segmentation
-bash dist_infer.sh configs/Segformer_MMSAM_adapter_large_MUSES_1024x1024_ss_RGBLIDAR.py /path/to/checkpoint_file 1 --eval mIoU --show-dir /inference_directory --resize-dim 1080 1920 #resize-dim is (800,600) in case of FMB
+bash dist_infer.sh configs/MUSES/Segformer_MMSAM_adapter_large_MUSES_1024x1024_ss_RGBLIDAR.py /path/to/checkpoint_file 1 --eval mIoU --show-dir inference_directory --resize-dim 1080 1920 #resize-dim is (800,600) in case of FMB
 ```
 
 ## :floppy_disk: Checkpoints
