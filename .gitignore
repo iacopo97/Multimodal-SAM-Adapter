@@ -162,3 +162,4 @@ datasets/FMB/test
 datasets/FMB/train
 datasets/FMB/val
 segmentation/pretrained*
+segmentation/visualization*

@@ -329,36 +329,7 @@ def single_gpu_test(model,
                 result = model(return_loss=False, rescale=False,**data)
             else:
                 result = model(return_loss=False, rescale=True, **data)
-            # if len(result)>1 and len(result)==6:
-            #     nr_output=6
-            #     result,mod_gamma_spatial_1,mod_gamma_spatial_2,mod_gamma_spatial_3,mod_gamma_spatial_4,mod_gamma_spatial_inj=result
-            #     mod_gamma_spatial_1 = mod_gamma_spatial_1[0].transpose(1,2,0)
-            #     mod_gamma_spatial_2 = mod_gamma_spatial_2[0].transpose(1,2,0)
-            #     mod_gamma_spatial_3 = mod_gamma_spatial_3[0].transpose(1,2,0)
-            #     mod_gamma_spatial_4 = mod_gamma_spatial_4[0].transpose(1,2,0)
-            #     mod_gamma_spatial_inj = mod_gamma_spatial_inj[0].transpose(1,2,0)
-            #     result=[result]
-            # # elif len(result)>1 and len(result)==5:
-            # #     nr_output=5
-            # #     result,mod_gamma_spatial_2,mod_gamma_spatial_3,mod_gamma_spatial_4,mod_gamma_spatial_inj=result
-            # #     mod_gamma_spatial_2 = mod_gamma_spatial_2[0].transpose(1,2,0)
-            # #     mod_gamma_spatial_3 = mod_gamma_spatial_3[0].transpose(1,2,0)
-            # #     mod_gamma_spatial_4 = mod_gamma_spatial_4[0].transpose(1,2,0)
-            # #     mod_gamma_spatial_inj = mod_gamma_spatial_inj[0].transpose(1,2,0)
-            # #     result=[result]
-            # elif len(result)>1 and len(result)==5:
-            #     nr_output=5
-            #     result,mod_gamma_spatial_1,mod_gamma_spatial_2,mod_gamma_spatial_3,mod_gamma_spatial_4=result
-            #     mod_gamma_spatial_1 = mod_gamma_spatial_1[0].transpose(1,2,0)
-            #     mod_gamma_spatial_2 = mod_gamma_spatial_2[0].transpose(1,2,0)
-            #     mod_gamma_spatial_3 = mod_gamma_spatial_3[0].transpose(1,2,0)
-            #     mod_gamma_spatial_4 = mod_gamma_spatial_4[0].transpose(1,2,0)
-            #     result=[result]
-            # elif len(result)>1 and len(result)==2:
-            #     nr_output=2
-            #     result,mod_gamma_spatial_inj=result
-            #     mod_gamma_spatial_inj = mod_gamma_spatial_inj[0].transpose(1,2,0)
-            #     result=[result]
+            
             bs=data['img'][0].size(0)
             if (len(result)>1  and bs==1): #len(result)>1 isinstance(result[0],list)) and len(result)>1
                 result, mod_gamma_spatial, nr_output=reading_mod_gamma_spatial(result)
@@ -379,14 +350,10 @@ def single_gpu_test(model,
             #######################################
             # img_metas = data['img_metas'][0].data[0]
             if np.all(img_metas[0]['img_norm_cfg']['mean']<=1): #HANDLE the case of DELIVER
-                # img_metas[0]['img_norm_cfg']['mean']= img_metas[0]['img_norm_cfg']['mean']*255
-                # img_metas[0]['img_norm_cfg']['std']= img_metas[0]['img_norm_cfg']['std']*255
-                # img_tensor=img_tensor*255
-                # img_tensor=img_tensor*255
+                
                 imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'], norm_by_max=True)
             else:
                 imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
-            # imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
             assert len(imgs) == len(img_metas)
             single_case=[]
             single_condition=[]
@@ -417,73 +384,7 @@ def single_gpu_test(model,
                     out_file = None
                 #try:
                 # if 'overexposed' in img_meta['filename'] or 'underexposed' in img_meta['filename']:
-                if  case is not None and (single_case_t  !=  'ordinary') and mod_gamma_spatial is not None:
-                    # modalities=[]
-                    # for key in img_meta.keys():
-                    #     if 'shape' in key and "ori" not in key and "ext" not in key and "pad" not in key: ###used to obtain the name of the modalities
-                    #         modalities.append(key[:-6]) ###remove the '_shape' part
-                    if bs>1:
-                        save_mod_gamma_spatial_with_mean_and_variance_colormap(mod_gamma_spatial[count], img_meta, out_dir, single_case_t,single_condition_t)
-                    else:
-                        save_mod_gamma_spatial_with_mean_and_variance_colormap(mod_gamma_spatial, img_meta, out_dir, single_case_t,single_condition_t)
-                    # count+=1    
-                    # if nr_output==6:
-                    #     for mod in modalities:
-                    #         mod_gamma_spatial_1_t=(((mod_gamma_spatial_1[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_1[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_1[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_1[:,:,modalities.index(mod)])))*255).astype(np.uint8) ###normalize the image min-max normalization
-                    #         mod_gamma_spatial_2_t=(((mod_gamma_spatial_2[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_2[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    #         mod_gamma_spatial_3_t=(((mod_gamma_spatial_3[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_3[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    #         mod_gamma_spatial_4_t=(((mod_gamma_spatial_4[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_4[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    #         mod_gamma_spatial_inj_t=(((mod_gamma_spatial_inj[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_inj[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    #         out_file_mod_gamma_spatial_1 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_1_{mod}_"+img_meta['ori_filename'])
-                    #         out_file_mod_gamma_spatial_2 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_2_{mod}_"+img_meta['ori_filename'])
-                    #         out_file_mod_gamma_spatial_3 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_3_{mod}_"+img_meta['ori_filename'])
-                    #         out_file_mod_gamma_spatial_4 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_4_{mod}_"+img_meta['ori_filename'])
-                    #         out_file_mod_gamma_spatial_inj = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_inj_{mod}_"+img_meta['ori_filename'])
-                    #         mmcv.imwrite(mod_gamma_spatial_1_t, out_file_mod_gamma_spatial_1)
-                    #         mmcv.imwrite(mod_gamma_spatial_2_t, out_file_mod_gamma_spatial_2)
-                    #         mmcv.imwrite(mod_gamma_spatial_3_t, out_file_mod_gamma_spatial_3)
-                    #         mmcv.imwrite(mod_gamma_spatial_4_t, out_file_mod_gamma_spatial_4)
-                    #         mmcv.imwrite(mod_gamma_spatial_inj_t, out_file_mod_gamma_spatial_inj)              
-                    # # elif nr_output==5:
-                    # #     for mod in modalities:
-                    # #         mod_gamma_spatial_2_t=(((mod_gamma_spatial_2[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_2[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    # #         mod_gamma_spatial_3_t=(((mod_gamma_spatial_3[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_3[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    # #         mod_gamma_spatial_4_t=(((mod_gamma_spatial_4[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_4[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    # #         mod_gamma_spatial_inj_t=(((mod_gamma_spatial_inj[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_inj[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    # #         out_file_mod_gamma_spatial_2 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_2_{mod}_"+img_meta['ori_filename'])
-                    # #         out_file_mod_gamma_spatial_3 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_3_{mod}_"+img_meta['ori_filename'])
-                    # #         out_file_mod_gamma_spatial_4 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_4_{mod}_"+img_meta['ori_filename'])
-                    # #         out_file_mod_gamma_spatial_inj = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_inj_{mod}_"+img_meta['ori_filename'])
-                    # #         mmcv.imwrite(mod_gamma_spatial_2_t, out_file_mod_gamma_spatial_2)
-                    # #         mmcv.imwrite(mod_gamma_spatial_3_t, out_file_mod_gamma_spatial_3)
-                    # #         mmcv.imwrite(mod_gamma_spatial_4_t, out_file_mod_gamma_spatial_4)
-                    # #         mmcv.imwrite(mod_gamma_spatial_inj_t, out_file_mod_gamma_spatial_inj)  
-                    # elif nr_output==5:
-                    #     for mod in modalities:
-                    #         mod_gamma_spatial_1_t=(((mod_gamma_spatial_1[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_1[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_1[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_1[:,:,modalities.index(mod)])))*255).astype(np.uint8) ###normalize the image min-max normalization
-                    #         mod_gamma_spatial_2_t=(((mod_gamma_spatial_2[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_2[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    #         mod_gamma_spatial_3_t=(((mod_gamma_spatial_3[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_3[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    #         mod_gamma_spatial_4_t=(((mod_gamma_spatial_4[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_4[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    #         out_file_mod_gamma_spatial_1 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_1_{mod}_"+img_meta['ori_filename'])
-                    #         out_file_mod_gamma_spatial_2 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_2_{mod}_"+img_meta['ori_filename'])
-                    #         out_file_mod_gamma_spatial_3 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_3_{mod}_"+img_meta['ori_filename'])
-                    #         out_file_mod_gamma_spatial_4 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_4_{mod}_"+img_meta['ori_filename'])
-                    #         mmcv.imwrite(mod_gamma_spatial_1_t, out_file_mod_gamma_spatial_1)
-                    #         mmcv.imwrite(mod_gamma_spatial_2_t, out_file_mod_gamma_spatial_2)
-                    #         mmcv.imwrite(mod_gamma_spatial_3_t, out_file_mod_gamma_spatial_3)
-                    #         mmcv.imwrite(mod_gamma_spatial_4_t, out_file_mod_gamma_spatial_4)
-                    # # elif nr_output==2:
-                    # #     for mod in modalities:
-                    # #         mod_gamma_spatial_inj_t=(((mod_gamma_spatial_inj[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_inj[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                    # #         out_file_mod_gamma_spatial_inj = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_inj_{mod}_"+img_meta['ori_filename'])
-                    # #         mmcv.imwrite(mod_gamma_spatial_inj_t, out_file_mod_gamma_spatial_inj)                      
-                # except Exception as e:
-                elif  case is None and mod_gamma_spatial is not None:
-                    if bs>1:
-                        save_mod_gamma_spatial_with_mean_and_variance_colormap_no_case(mod_gamma_spatial[count], img_meta, out_dir)
-                    else:
-                        save_mod_gamma_spatial_with_mean_and_variance_colormap_no_case(mod_gamma_spatial, img_meta, out_dir)
-
+        
                 if bs>1:
                     model.module.show_result(
                         img_show,
@@ -522,13 +423,6 @@ def single_gpu_test(model,
                 count=0
                 for img_meta in img_metas:
                     filename.append(img_meta['filename'])
-                # for c in case:
-                #     if c in img_meta['filename']:
-                #         result_dict[c].extend(result) ###store the results for each case
-                #         ordinary_flag=False
-                # if ordinary_flag==True:
-                #     result_dict['ordinary'].extend(result)
-                #     ordinary_flag=False
                     if bs>1: 
                         result_dict=fill_case_dictionary([result[count]], single_case[count], single_condition[count], result_dict)
                     else:
@@ -640,43 +534,12 @@ def multi_gpu_test(model,
                 result = model(return_loss=False, rescale=False,**data)
             else:
                 result = model(return_loss=False, rescale=True, **data)
-            # if len(result)>1 and len(result)==6:
-            #     nr_output=6
-            #     result,mod_gamma_spatial_1,mod_gamma_spatial_2,mod_gamma_spatial_3,mod_gamma_spatial_4,mod_gamma_spatial_inj=result
-            #     mod_gamma_spatial_1 = mod_gamma_spatial_1[0].transpose(1,2,0)
-            #     mod_gamma_spatial_2 = mod_gamma_spatial_2[0].transpose(1,2,0)
-            #     mod_gamma_spatial_3 = mod_gamma_spatial_3[0].transpose(1,2,0)
-            #     mod_gamma_spatial_4 = mod_gamma_spatial_4[0].transpose(1,2,0)
-            #     mod_gamma_spatial_inj = mod_gamma_spatial_inj[0].transpose(1,2,0)
-            #     result=[result]
-            # # elif len(result)>1 and len(result)==5:
-            # #     nr_output=5
-            # #     result,mod_gamma_spatial_2,mod_gamma_spatial_3,mod_gamma_spatial_4,mod_gamma_spatial_inj=result
-            # #     mod_gamma_spatial_2 = mod_gamma_spatial_2[0].transpose(1,2,0)
-            # #     mod_gamma_spatial_3 = mod_gamma_spatial_3[0].transpose(1,2,0)
-            # #     mod_gamma_spatial_4 = mod_gamma_spatial_4[0].transpose(1,2,0)
-            # #     mod_gamma_spatial_inj = mod_gamma_spatial_inj[0].transpose(1,2,0)
-            # #     result=[result]
-            # elif len(result)>1 and len(result)==5:
-            #     nr_output=5
-            #     result,mod_gamma_spatial_1,mod_gamma_spatial_2,mod_gamma_spatial_3,mod_gamma_spatial_4=result
-            #     mod_gamma_spatial_1 = mod_gamma_spatial_1[0].transpose(1,2,0)
-            #     mod_gamma_spatial_2 = mod_gamma_spatial_2[0].transpose(1,2,0)
-            #     mod_gamma_spatial_3 = mod_gamma_spatial_3[0].transpose(1,2,0)
-            #     mod_gamma_spatial_4 = mod_gamma_spatial_4[0].transpose(1,2,0)
-            #     result=[result]
-            # elif len(result)>1 and len(result)==2:
-            #     nr_output=2
-            #     result,mod_gamma_spatial_inj=result
-            #     mod_gamma_spatial_inj = mod_gamma_spatial_inj[0].transpose(1,2,0)
-            #     result=[result]
+           
             bs=data['img'][0].size(0)
             if (len(result)>1   and bs==1): #isinstance(result[0],list)) and len(result)>1
                 result, mod_gamma_spatial, nr_output=reading_mod_gamma_spatial(result)
             if bs>1 and len(result)>bs:# (len(result[0])>1 and isinstance(result[0],list)):
-                # mod_gamma_spatial=[]
-                # for i in range(bs):
-                # cum=result[i]+result[i+bs:]
+              
                 result, mod_gamma_spatial, nr_output=reading_mod_gamma_spatial_bs(result,bs)
                 # mod_gamma_spatial.append(mod_gamma_spatial_t)
                 # result[i]=result_t 
@@ -685,15 +548,11 @@ def multi_gpu_test(model,
             #img_tensor = data['img'][0]
             img_metas = data['img_metas'][0].data[0]
             #########MY MOD#######################
-            # img_tensor = data['img'][0][:,:3,:,:]
             img_tensor = data['img'][0][:,:3,:,:]
             #######################################
             # img_metas = data['img_metas'][0].data[0]
             if np.all(img_metas[0]['img_norm_cfg']['mean']<=1): #HANDLE the case of DELIVER
-                # img_metas[0]['img_norm_cfg']['mean']= img_metas[0]['img_norm_cfg']['mean']*255
-                # img_metas[0]['img_norm_cfg']['std']= img_metas[0]['img_norm_cfg']['std']*255
-                # img_tensor=img_tensor*255
-                # img_tensor=img_tensor*255
+                
                 imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'], norm_by_max=True)
             else:
                 imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
@@ -710,11 +569,7 @@ def multi_gpu_test(model,
                 # ori_w,ori_h=(1024,1024)
                 if resize_dim is not None and resize_dim[0] !=1:
                     ori_w,ori_h=resize_dim
-                    # if ori_w==ori_h:
-                    #     img_show = mmcv.imrescale(img_show, (ori_w, ori_h))
-                    # else:
-                    #     img_show = mmcv.imresize(img_show, (ori_w, ori_h))
-                    
+
                 if case is not None:
                     single_case_t, single_condition_t=check_case(img_meta['filename'],case, condition)
                     single_case.append(single_case_t)
@@ -726,91 +581,24 @@ def multi_gpu_test(model,
                     out_file = osp.join(out_dir+"/prediction", img_meta['ori_filename'])
                 else:
                     out_file = None
-                #try:
-                # if 'overexposed' in img_meta['filename'] or 'underexposed' in img_meta['filename']:
-                # if  case is not None and (single_case_t  !=  'ordinary') and mod_gamma_spatial is not None:
-                #     # modalities=[]
-                #     # for key in img_meta.keys():
-                #     #     if 'shape' in key and "ori" not in key and "ext" not in key and "pad" not in key: ###used to obtain the name of the modalities
-                #     #         modalities.append(key[:-6]) ###remove the '_shape' part
-                #     if bs>1:
-                #         save_mod_gamma_spatial_with_mean_and_variance_colormap(mod_gamma_spatial[count], img_meta, out_dir, single_case_t,single_condition_t)
-                #     else:
-                #         save_mod_gamma_spatial_with_mean_and_variance_colormap(mod_gamma_spatial, img_meta, out_dir, single_case_t,single_condition_t)
-                #     # count+=1    
-                #     # if nr_output==6:
-                #     #     for mod in modalities:
-                #     #         mod_gamma_spatial_1_t=(((mod_gamma_spatial_1[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_1[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_1[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_1[:,:,modalities.index(mod)])))*255).astype(np.uint8) ###normalize the image min-max normalization
-                #     #         mod_gamma_spatial_2_t=(((mod_gamma_spatial_2[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_2[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     #         mod_gamma_spatial_3_t=(((mod_gamma_spatial_3[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_3[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     #         mod_gamma_spatial_4_t=(((mod_gamma_spatial_4[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_4[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     #         mod_gamma_spatial_inj_t=(((mod_gamma_spatial_inj[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_inj[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     #         out_file_mod_gamma_spatial_1 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_1_{mod}_"+img_meta['ori_filename'])
-                #     #         out_file_mod_gamma_spatial_2 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_2_{mod}_"+img_meta['ori_filename'])
-                #     #         out_file_mod_gamma_spatial_3 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_3_{mod}_"+img_meta['ori_filename'])
-                #     #         out_file_mod_gamma_spatial_4 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_4_{mod}_"+img_meta['ori_filename'])
-                #     #         out_file_mod_gamma_spatial_inj = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_inj_{mod}_"+img_meta['ori_filename'])
-                #     #         mmcv.imwrite(mod_gamma_spatial_1_t, out_file_mod_gamma_spatial_1)
-                #     #         mmcv.imwrite(mod_gamma_spatial_2_t, out_file_mod_gamma_spatial_2)
-                #     #         mmcv.imwrite(mod_gamma_spatial_3_t, out_file_mod_gamma_spatial_3)
-                #     #         mmcv.imwrite(mod_gamma_spatial_4_t, out_file_mod_gamma_spatial_4)
-                #     #         mmcv.imwrite(mod_gamma_spatial_inj_t, out_file_mod_gamma_spatial_inj)              
-                #     # # elif nr_output==5:
-                #     # #     for mod in modalities:
-                #     # #         mod_gamma_spatial_2_t=(((mod_gamma_spatial_2[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_2[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     # #         mod_gamma_spatial_3_t=(((mod_gamma_spatial_3[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_3[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     # #         mod_gamma_spatial_4_t=(((mod_gamma_spatial_4[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_4[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     # #         mod_gamma_spatial_inj_t=(((mod_gamma_spatial_inj[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_inj[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     # #         out_file_mod_gamma_spatial_2 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_2_{mod}_"+img_meta['ori_filename'])
-                #     # #         out_file_mod_gamma_spatial_3 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_3_{mod}_"+img_meta['ori_filename'])
-                #     # #         out_file_mod_gamma_spatial_4 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_4_{mod}_"+img_meta['ori_filename'])
-                #     # #         out_file_mod_gamma_spatial_inj = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_inj_{mod}_"+img_meta['ori_filename'])
-                #     # #         mmcv.imwrite(mod_gamma_spatial_2_t, out_file_mod_gamma_spatial_2)
-                #     # #         mmcv.imwrite(mod_gamma_spatial_3_t, out_file_mod_gamma_spatial_3)
-                #     # #         mmcv.imwrite(mod_gamma_spatial_4_t, out_file_mod_gamma_spatial_4)
-                #     # #         mmcv.imwrite(mod_gamma_spatial_inj_t, out_file_mod_gamma_spatial_inj)  
-                #     # elif nr_output==5:
-                #     #     for mod in modalities:
-                #     #         mod_gamma_spatial_1_t=(((mod_gamma_spatial_1[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_1[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_1[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_1[:,:,modalities.index(mod)])))*255).astype(np.uint8) ###normalize the image min-max normalization
-                #     #         mod_gamma_spatial_2_t=(((mod_gamma_spatial_2[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_2[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_2[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     #         mod_gamma_spatial_3_t=(((mod_gamma_spatial_3[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_3[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_3[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     #         mod_gamma_spatial_4_t=(((mod_gamma_spatial_4[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_4[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_4[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     #         out_file_mod_gamma_spatial_1 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_1_{mod}_"+img_meta['ori_filename'])
-                #     #         out_file_mod_gamma_spatial_2 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_2_{mod}_"+img_meta['ori_filename'])
-                #     #         out_file_mod_gamma_spatial_3 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_3_{mod}_"+img_meta['ori_filename'])
-                #     #         out_file_mod_gamma_spatial_4 = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_4_{mod}_"+img_meta['ori_filename'])
-                #     #         mmcv.imwrite(mod_gamma_spatial_1_t, out_file_mod_gamma_spatial_1)
-                #     #         mmcv.imwrite(mod_gamma_spatial_2_t, out_file_mod_gamma_spatial_2)
-                #     #         mmcv.imwrite(mod_gamma_spatial_3_t, out_file_mod_gamma_spatial_3)
-                #     #         mmcv.imwrite(mod_gamma_spatial_4_t, out_file_mod_gamma_spatial_4)
-                #     # # elif nr_output==2:
-                #     # #     for mod in modalities:
-                #     # #         mod_gamma_spatial_inj_t=(((mod_gamma_spatial_inj[:,:,modalities.index(mod)]-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)]))/(np.max(mod_gamma_spatial_inj[:,:,modalities.index(mod)])-np.min(mod_gamma_spatial_inj[:,:,modalities.index(mod)])))*255).astype(np.uint8)
-                #     # #         out_file_mod_gamma_spatial_inj = osp.join(out_dir+f"/mod_gamma_spatial_{mod}", f"gamma_spatial_inj_{mod}_"+img_meta['ori_filename'])
-                #     # #         mmcv.imwrite(mod_gamma_spatial_inj_t, out_file_mod_gamma_spatial_inj)                      
-                # # except Exception as e:
-                # elif  case is None and mod_gamma_spatial is not None:
-                #     if bs>1:
-                #         save_mod_gamma_spatial_with_mean_and_variance_colormap_no_case(mod_gamma_spatial[count], img_meta, out_dir)
-                #     else:
-                #         save_mod_gamma_spatial_with_mean_and_variance_colormap_no_case(mod_gamma_spatial, img_meta, out_dir)
-                # if bs>1:
-                #     model.module.show_result(
-                #         img_show,
-                #         [result[count]],
-                #         palette=dataset.PALETTE,
-                #         show=show,
-                #         out_file=out_file,
-                #         opacity=opacity)
-                #     count+=1
-                # else:
-                #     model.module.show_result(
-                #         img_show,
-                #         result,
-                #         palette=dataset.PALETTE,
-                #         show=show,
-                #         out_file=out_file,
-                #         opacity=opacity)
+                if bs>1:
+                    model.module.show_result(
+                        img_show,
+                        [result[count]],
+                        palette=dataset.PALETTE,
+                        show=show,
+                        out_file=out_file,
+                        opacity=opacity)
+                    count+=1
+                else:
+                    model.module.show_result(
+                        img_show,
+                        result,
+                        palette=dataset.PALETTE,
+                        show=show,
+                        out_file=out_file,
+                        opacity=opacity)
+               
         if efficient_test:
             result = [np2tmp(_, tmpdir='.efficient_test') for _ in result]
 
@@ -827,13 +615,6 @@ def multi_gpu_test(model,
                 count=0
                 for img_meta in img_metas:
                     filename.append(img_meta['filename'])
-                # for c in case:
-                #     if c in img_meta['filename']:
-                #         result_dict[c].extend(result) ###store the results for each case
-                #         ordinary_flag=False
-                # if ordinary_flag==True:
-                #     result_dict['ordinary'].extend(result)
-                #     ordinary_flag=False
                     if bs>1: 
                         result_dict=fill_case_dictionary([result[count]], single_case[count], single_condition[count], result_dict)
                     else:
@@ -849,12 +630,6 @@ def multi_gpu_test(model,
             for _ in range(batch_size):
                 prog_bar.update()
 
-    # collect results from all ranks
-    # if gpu_collect:
-    #     results = collect_results_gpu(results, len(dataset))
-    #     print("pass")
-    # else:
-    #     results = collect_results_cpu(results, len(dataset), tmpdir)
     if case is not None:
         if gpu_collect:
             result_dict = collect_results_gpu_dict(result_dict, len(dataset))
