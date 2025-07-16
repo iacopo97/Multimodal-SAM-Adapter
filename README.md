@@ -96,13 +96,12 @@ pip install numpy==1.24.3
 pip install yapf==0.40.1
 pip install mmsegmentation==0.20.2
 pip install tqdm
-<<<<<<< HEAD
 pip install "opencv-python<4.9.0"
-=======
-pip install opencv-python<4.9.0
+pip install "opencv-python<4.9.0"
+pip install setuptools==59.5.0
+pip install tensorboard
 pip install scipy
 pip install einops==0.8.0
->>>>>>> b6b57c6130235595d4e14f81ade7a4e44f7fbe85
 cd ops
 bash make.sh # compile deformable attention
 ```
