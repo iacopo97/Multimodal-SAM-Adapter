@@ -161,93 +161,6 @@ def check_case(filename,case, condition):
                     return c, cond_t
             return 'ordinary',cond_t
 
-def save_mod_gamma_spatial_with_mean_and_variance(mod_gamma_spatial, img_meta, out_dir,single_case, single_condition):
-    for index in range(len(mod_gamma_spatial)):
-        mod_gamma_spatial_t=mod_gamma_spatial[index]
-        mod_gamma_argmax_t=np.argmax(mod_gamma_spatial_t, axis=2)
-        mod_colored_t=coloring_according_to_palette(mod_gamma_argmax_t)
-        out_file_mod_gamma_spatial_colored_t = osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_colored"+img_meta['ori_filename'])
-        out_file_mod_gamma_spatial_grayscale_t = osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_grayscale"+img_meta['ori_filename'])
-        mmcv.imwrite(mod_colored_t[:,:,::-1], out_file_mod_gamma_spatial_colored_t)
-        mod_gamma_argmax_t=mod_gamma_argmax_t*30
-        mmcv.imwrite(mod_gamma_argmax_t, out_file_mod_gamma_spatial_grayscale_t)
-        mean = np.mean(mod_gamma_spatial_t, axis=(0, 1))
-        variance = np.var(mod_gamma_spatial_t, axis=(0, 1))
-        np.save(osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", img_meta['ori_filename'][:-4]+f"_mean_{index+1}.npy"), mean)
-        np.save(osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", img_meta['ori_filename'][:-4]+f"_variance_{index+1}.npy"), variance)
-        
-def save_mod_gamma_spatial_with_mean_and_variance_colormap(mod_gamma_spatial, img_meta, out_dir,single_case, single_condition):
-    extract_mod=[key for key in img_meta.keys() if 'norm_cfg' in key]
-    for count in range(len(extract_mod)):
-        extract_mod[count]=extract_mod[count].replace('_norm_cfg','')
-    modalities_name=extract_mod
-    for index in range(len(mod_gamma_spatial)):
-        mod_gamma_spatial_t=mod_gamma_spatial[index]
-        mod_gamma_argmax_t=np.argmax(mod_gamma_spatial_t, axis=2)
-        mod_colored_t=coloring_according_to_palette(mod_gamma_argmax_t)
-        out_file_mod_gamma_spatial_colored_t = osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_max_colored"+img_meta['ori_filename'])
-        # if len(modalities_name)==2:
-        for i in range(mod_gamma_spatial_t.shape[2]):
-            out_file_mod_gamma_spatial_colored_t_i = osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_colormap"+f"_{modalities_name[i]}_"+img_meta['ori_filename'])
-            # out_file_mod_gamma_spatial_grayscale_t = osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_grayscale"+img_meta['ori_filename'])
-            # mmcv.imwrite(mod_colored_t[:,:,::-1], out_file_mod_gamma_spatial_colored_t)
-            # mod_gamma_argmax_t=mod_gamma_argmax_t*30
-            # mmcv.imwrite(mod_gamma_argmax_t, out_file_mod_gamma_spatial_grayscale_t)
-            mod_gamma_spatial_t_i=mod_gamma_spatial_t[:,:,i]
-            os.makedirs(osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}"), exist_ok=True)
-            plt.imsave(out_file_mod_gamma_spatial_colored_t_i, mod_gamma_spatial_t_i, cmap='inferno',vmax=1,vmin=0)
-        mmcv.imwrite(mod_colored_t[:,:,::-1], out_file_mod_gamma_spatial_colored_t)
-        mean = np.mean(mod_gamma_spatial_t, axis=(0, 1))
-        variance = np.var(mod_gamma_spatial_t, axis=(0, 1))
-        np.save(osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", img_meta['ori_filename'][:-4]+f"_mean_{index+1}.npy"), mean)
-        np.save(osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", img_meta['ori_filename'][:-4]+f"_variance_{index+1}.npy"), variance)
-
-def save_mod_gamma_spatial_with_mean_and_variance_colormap_no_case(mod_gamma_spatial, img_meta, out_dir):
-    extract_mod=[key for key in img_meta.keys() if 'norm_cfg' in key]
-    for count in range(len(extract_mod)):
-        extract_mod[count]=extract_mod[count].replace('_norm_cfg','')
-    modalities_name=extract_mod
-    if isinstance(mod_gamma_spatial,list):
-        for index in range(len(mod_gamma_spatial)):
-            mod_gamma_spatial_t=mod_gamma_spatial[index]
-            mod_gamma_argmax_t=np.argmax(mod_gamma_spatial_t, axis=2)
-            mod_colored_t=coloring_according_to_palette(mod_gamma_argmax_t)
-            out_file_mod_gamma_spatial_colored_t = osp.join(out_dir+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_max_colored"+img_meta['ori_filename'])
-            # if len(modalities_name)==2:
-            for i in range(mod_gamma_spatial_t.shape[2]):
-                out_file_mod_gamma_spatial_colored_t_i = osp.join(out_dir+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_colormap"+f"_{modalities_name[i]}_"+img_meta['ori_filename'])
-                # out_file_mod_gamma_spatial_grayscale_t = osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_grayscale"+img_meta['ori_filename'])
-                # mmcv.imwrite(mod_colored_t[:,:,::-1], out_file_mod_gamma_spatial_colored_t)
-                # mod_gamma_argmax_t=mod_gamma_argmax_t*30
-                # mmcv.imwrite(mod_gamma_argmax_t, out_file_mod_gamma_spatial_grayscale_t)
-                mod_gamma_spatial_t_i=mod_gamma_spatial_t[:,:,i]
-                os.makedirs(osp.join(out_dir+f"/mod_gamma_spatial_{str(index+1)}"), exist_ok=True)
-                plt.imsave(out_file_mod_gamma_spatial_colored_t_i, mod_gamma_spatial_t_i, cmap='inferno',vmax=1,vmin=0)
-            mmcv.imwrite(mod_colored_t[:,:,::-1], out_file_mod_gamma_spatial_colored_t)
-            mean = np.mean(mod_gamma_spatial_t, axis=(0, 1))
-            variance = np.var(mod_gamma_spatial_t, axis=(0, 1))
-            np.save(osp.join(out_dir+f"/mod_gamma_spatial_{str(index+1)}", img_meta['ori_filename'][:-4]+f"_mean_{index+1}.npy"), mean)
-            np.save(osp.join(out_dir+f"/mod_gamma_spatial_{str(index+1)}", img_meta['ori_filename'][:-4]+f"_variance_{index+1}.npy"), variance)
-    else:
-        mod_gamma_spatial_t=mod_gamma_spatial
-        mod_gamma_argmax_t=np.argmax(mod_gamma_spatial_t, axis=2)
-        mod_colored_t=coloring_according_to_palette(mod_gamma_argmax_t)
-        out_file_mod_gamma_spatial_colored_t = osp.join(out_dir+f"/mod_gamma_spatial_1", f"gamma_spatial_1_max_colored"+img_meta['ori_filename'])
-        # if len(modalities_name)==2:
-        for i in range(mod_gamma_spatial_t.shape[2]):
-            out_file_mod_gamma_spatial_colored_t_i = osp.join(out_dir+f"/mod_gamma_spatial_1", f"gamma_spatial_1_colormap"+f"_{modalities_name[i]}_"+img_meta['ori_filename'])
-            # out_file_mod_gamma_spatial_grayscale_t = osp.join(out_dir+f"/{single_condition}"+f"/{single_case}"+f"/mod_gamma_spatial_{str(index+1)}", f"gamma_spatial_{str(index+1)}_grayscale"+img_meta['ori_filename'])
-            # mmcv.imwrite(mod_colored_t[:,:,::-1], out_file_mod_gamma_spatial_colored_t)
-            # mod_gamma_argmax_t=mod_gamma_argmax_t*30
-            # mmcv.imwrite(mod_gamma_argmax_t, out_file_mod_gamma_spatial_grayscale_t)
-            mod_gamma_spatial_t_i=mod_gamma_spatial_t[:,:,i]
-            os.makedirs(osp.join(out_dir+f"/mod_gamma_spatial_1"), exist_ok=True)
-            plt.imsave(out_file_mod_gamma_spatial_colored_t_i, mod_gamma_spatial_t_i, cmap='inferno',vmax=1,vmin=0)
-        mmcv.imwrite(mod_colored_t[:,:,::-1], out_file_mod_gamma_spatial_colored_t)
-        mean = np.mean(mod_gamma_spatial_t, axis=(0, 1))
-        variance = np.var(mod_gamma_spatial_t, axis=(0, 1))
-        np.save(osp.join(out_dir+f"/mod_gamma_spatial_1", img_meta['ori_filename'][:-4]+f"_mean_1.npy"), mean)
-        np.save(osp.join(out_dir+f"/mod_gamma_spatial_1", img_meta['ori_filename'][:-4]+f"_variance_1.npy"), variance)
    
 def single_gpu_test(model,
                     data_loader,
@@ -603,8 +516,12 @@ def multi_gpu_test(model,
             result = [np2tmp(_, tmpdir='.efficient_test') for _ in result]
 
         if format_only:
-            result = dataset.format_results(
-                result, indices=batch_indices, **format_args)
+            if 'MUSES' in dataset.__doc__:
+                result = dataset.format_results(
+                    result, indices=batch_indices, out_file=out_file, **format_args)
+            else:
+                result = dataset.format_results(
+                    result, indices=batch_indices, **format_args)
         if pre_eval:
             # TODO: adapt samples_per_gpu > 1.
             # only samples_per_gpu=1 valid now

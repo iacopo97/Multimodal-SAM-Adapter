@@ -1,7 +1,7 @@
 # Copyright (c) Shanghai AI Lab. All rights reserved.
 _base_ = [
     '../_base_/models/segformer_mit-b0.py',
-    '../_base_/datasets/muses_val.py', 
+    '../_base_/datasets/muses.py', 
     '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_40ep.py'
 ]
@@ -15,7 +15,7 @@ crop_size =(1024,1024)
 checkpoint_conv='https://download.openmmlab.com/mmclassification/v0/convnext/convnext-small_in21k-pre_3rdparty_in1k-384px_20221219-96f0bb87.pth'
 mod_dir_tr='projected_to_rgb/lidar/train',
 mod_dir_val='projected_to_rgb/lidar/val',
-mod_dir_test='projected_to_rgb/lidar/val',
+mod_dir_test='projected_to_rgb/lidar/test',
 mod_suffix='_lidar.npz',
 stride=(640,640)
 img_scale = (1920,1080)
