@@ -48,8 +48,7 @@ def parse_args():
         nargs='+',
         help='ids of gpus to use '
         '(only applicable to non-distributed training)')
-    parser.add_argument('--seed', type=int, default=1634254642, help='random seed') #1911316046 try this seed default None 1965672577 3407 seed of Geminifusion and Cmnext and Stictch fusion 76083903 1849279853
-    #default=1849279853,1849279853 default = 662223532 1634254642 1158891656 1849279853 1423906614,1849279853 1849279853 1849279853 388176536 1971691451 1971691451
+    parser.add_argument('--seed', type=int, default=None, help='random seed') 
     parser.add_argument(
         '--deterministic',
         action='store_true',
