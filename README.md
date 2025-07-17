@@ -136,7 +136,7 @@ bash dist_test.sh configs/DELIVER/Segformer_MMSAM_adapter_large_DELIVER_1024x102
 
 ```
 cd segmentation
-bash dist_infer.sh configs/MUSES/Segformer_MMSAM_adapter_large_MUSES_1024x1024_ss_RGBLIDAR.py /path/to/checkpoint_file 1 --eval mIoU --show-dir inference_directory --resize-dim 1080 1920 #resize-dim is (800,600) in case of FMB
+bash dist_infer.sh configs/MUSES/Segformer_MMSAM_adapter_large_MUSES_1024x1024_ss_RGBLIDAR.py /path/to/checkpoint_file 1 --show-dir inference_directory --resize-dim 1080 1920 #resize-dim is (800,600) in case of FMB
 ```
 
 ## :floppy_disk: Checkpoints
