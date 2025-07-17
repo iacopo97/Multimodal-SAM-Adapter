@@ -353,6 +353,170 @@ class FMB_val(CustomDataset):
 
         return pre_eval_results
     
+    # def evaluate(self,
+    #              results,
+    #              metric='mIoU',
+    #              logger=None,
+    #              gt_seg_maps=None,
+    #              **kwargs):
+    #     """Evaluate the dataset.
+
+    #     Args:
+    #         results (list[tuple[torch.Tensor]] | list[str]): per image pre_eval
+    #              results or predict segmentation map for computing evaluation
+    #              metric.
+    #         metric (str | list[str]): Metrics to be evaluated. 'mIoU',
+    #             'mDice' and 'mFscore' are supported.
+    #         logger (logging.Logger | None | str): Logger used for printing
+    #             related information during evaluation. Default: None.
+    #         gt_seg_maps (generator[ndarray]): Custom gt seg maps as input,
+    #             used in ConcatDataset
+
+    #     Returns:
+    #         dict[str, float]: Default metrics.
+    #     """
+    #     if isinstance(metric, str):
+    #         metric = [metric]
+    #     allowed_metrics = ['mIoU', 'mDice', 'mFscore', 'Fscore.lane', 'Precision.lane', 'Recall.lane']
+    #     if not set(metric).issubset(set(allowed_metrics)):
+    #         raise KeyError('metric {} is not supported'.format(metric))
+
+    #     eval_results = {}
+    #     # test a list of files
+    #     num_classes = len(self.CLASSES)
+    #     if mmcv.is_list_of(results, np.ndarray) or mmcv.is_list_of(
+    #             results, str):
+    #         if gt_seg_maps is None:
+    #             gt_seg_maps = self.get_gt_seg_maps()
+    #         # num_classes = len(self.CLASSES)
+    #         ret_metrics = eval_metrics(
+    #             results,
+    #             gt_seg_maps,
+    #             num_classes,
+    #             self.ignore_index,
+    #             metric,
+    #             label_map=self.label_map,
+    #             reduce_zero_label=self.reduce_zero_label)
+    #     # test a list of pre_eval_results
+    #     else:
+    #         ret_metrics = pre_eval_to_metrics(results, metric,nan_to_num=0)
+    #         # ret_metrics = pre_eval_to_metrics_dict(results, metric, nan_to_num=0, num_classes=num_classes)
+        
+    #     # Because dataset.CLASSES is required for per-eval.
+    #     if self.CLASSES is None:
+    #         class_names = tuple(range(num_classes))
+    #     else:
+    #         class_names = self.CLASSES
+    #     ret_metrics_summary={}
+    #     ret_metrics_class={}
+    #     for keys_ext in ret_metrics.keys():
+    #         # ret_metrics_t=ret_metrics[keys_ext]
+    #         ret_metrics_summary[keys_ext]={}
+    #         ret_metrics_class[keys_ext]={}
+    #         eval_results[keys_ext]={}
+    #         if keys_ext!='global':   
+    #             for keys_int in ret_metrics[keys_ext].keys():
+    #                 # summary table
+    #                 ret_metrics_summary[keys_ext][keys_int] = OrderedDict({
+    #                     # ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
+    #                     ret_metric:  np.round(np.nanmean(ret_metric_value) * 100,2)
+    #                     for ret_metric, ret_metric_value in ret_metrics[keys_ext][keys_int].items()
+    #                 })
+
+    #                 # each class table
+    #                 ret_metrics[keys_ext][keys_int].pop('aAcc', None)
+    #                 ret_metrics_class[keys_ext][keys_int] = OrderedDict({
+    #                     # ret_metric: np.round(ret_metric_value * 100, 2)
+    #                     ret_metric: np.round(ret_metric_value * 100,2)
+    #                     for ret_metric, ret_metric_value in ret_metrics[keys_ext][keys_int].items()
+    #                 })
+    #                 ret_metrics_class[keys_ext][keys_int].update({'Class': class_names})
+    #                 ret_metrics_class[keys_ext][keys_int].move_to_end('Class', last=False)
+
+    #                 # for logger
+    #                 class_table_data = PrettyTable()
+    #                 for key, val in ret_metrics_class[keys_ext][keys_int].items():
+    #                     class_table_data.add_column(key, val)
+
+    #                 summary_table_data = PrettyTable()
+    #                 for key, val in ret_metrics_summary[keys_ext][keys_int].items():
+    #                     if key == 'aAcc':
+    #                         summary_table_data.add_column(key, [val])
+    #                     else:
+    #                         summary_table_data.add_column('m' + key, [val])
+
+    #                 print_log(f'per class {keys_ext+"_"+keys_int} results:', logger)
+    #                 print_log('\n' + class_table_data.get_string(), logger=logger)
+    #                 print_log(f'Summary  {keys_ext+"_"+keys_int}:', logger)
+    #                 print_log('\n' + summary_table_data.get_string(), logger=logger)
+
+    #                 # each metric dict
+    #                 eval_results_t = {}
+    #                 for key, value in ret_metrics_summary[keys_ext][keys_int].items():
+    #                     if key == 'aAcc':
+    #                         eval_results_t[key] = value / 100.0
+    #                     else:
+    #                         eval_results_t['m' + key] = value / 100.0
+
+    #                 ret_metrics_class[keys_ext][keys_int].pop('Class', None)
+    #                 for key, value in ret_metrics_class[keys_ext][keys_int].items():
+    #                     eval_results_t.update({
+    #                         key + '.' + str(name): value[idx] / 100.0
+    #                         for idx, name in enumerate(class_names)
+    #                     })
+    #                 eval_results[keys_ext][keys_int]=eval_results_t
+    #         else:
+    #             # summary table
+    #             ret_metrics_summary[keys_ext] = OrderedDict({
+    #                 # ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
+    #                 ret_metric:  np.round(np.nanmean(ret_metric_value) * 100,2)
+    #                 for ret_metric, ret_metric_value in ret_metrics[keys_ext].items()
+    #             })
+
+    #             # each class table
+    #             ret_metrics[keys_ext].pop('aAcc', None)
+    #             ret_metrics_class[keys_ext] = OrderedDict({
+    #                 # ret_metric: np.round(ret_metric_value * 100, 2)
+    #                 ret_metric: np.round(ret_metric_value * 100,2)
+    #                 for ret_metric, ret_metric_value in ret_metrics[keys_ext].items()
+    #             })
+    #             ret_metrics_class[keys_ext].update({'Class': class_names})
+    #             ret_metrics_class[keys_ext].move_to_end('Class', last=False)
+
+    #             # for logger
+    #             class_table_data = PrettyTable()
+    #             for key, val in ret_metrics_class[keys_ext].items():
+    #                 class_table_data.add_column(key, val)
+
+    #             summary_table_data = PrettyTable()
+    #             for key, val in ret_metrics_summary[keys_ext].items():
+    #                 if key == 'aAcc':
+    #                     summary_table_data.add_column(key, [val])
+    #                 else:
+    #                     summary_table_data.add_column('m' + key, [val])
+
+    #             print_log(f'per class {keys_ext} results:', logger)
+    #             print_log('\n' + class_table_data.get_string(), logger=logger)
+    #             print_log(f'Summary  {keys_ext}:', logger)
+    #             print_log('\n' + summary_table_data.get_string(), logger=logger)
+
+    #             # each metric dict
+    #             eval_results_t = {}
+    #             for key, value in ret_metrics_summary[keys_ext].items():
+    #                 if key == 'aAcc':
+    #                     eval_results_t[key] = value / 100.0
+    #                 else:
+    #                     eval_results_t['m' + key] = value / 100.0
+
+    #             ret_metrics_class[keys_ext].pop('Class', None)
+    #             for key, value in ret_metrics_class[keys_ext].items():
+    #                 eval_results_t.update({
+    #                     key + '.' + str(name): value[idx] / 100.0
+    #                     for idx, name in enumerate(class_names)
+    #                 })
+    #             eval_results[keys_ext]=eval_results_t
+
+    #     return eval_results
     def evaluate(self,
                  results,
                  metric='mIoU',
@@ -383,12 +547,11 @@ class FMB_val(CustomDataset):
 
         eval_results = {}
         # test a list of files
-        num_classes = len(self.CLASSES)
         if mmcv.is_list_of(results, np.ndarray) or mmcv.is_list_of(
                 results, str):
             if gt_seg_maps is None:
                 gt_seg_maps = self.get_gt_seg_maps()
-            # num_classes = len(self.CLASSES)
+            num_classes = len(self.CLASSES)
             ret_metrics = eval_metrics(
                 results,
                 gt_seg_maps,
@@ -399,124 +562,61 @@ class FMB_val(CustomDataset):
                 reduce_zero_label=self.reduce_zero_label)
         # test a list of pre_eval_results
         else:
-            ret_metrics = pre_eval_to_metrics_dict(results, metric, nan_to_num=0, num_classes=num_classes)
-        
+            ret_metrics = pre_eval_to_metrics(results, metric,nan_to_num=0)#nan_to_num=0
+
         # Because dataset.CLASSES is required for per-eval.
         if self.CLASSES is None:
             class_names = tuple(range(num_classes))
         else:
             class_names = self.CLASSES
-        ret_metrics_summary={}
-        ret_metrics_class={}
-        for keys_ext in ret_metrics.keys():
-            # ret_metrics_t=ret_metrics[keys_ext]
-            ret_metrics_summary[keys_ext]={}
-            ret_metrics_class[keys_ext]={}
-            eval_results[keys_ext]={}
-            if keys_ext!='global':   
-                for keys_int in ret_metrics[keys_ext].keys():
-                    # summary table
-                    ret_metrics_summary[keys_ext][keys_int] = OrderedDict({
-                        # ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
-                        ret_metric:  np.round(np.nanmean(ret_metric_value) * 100,2)
-                        for ret_metric, ret_metric_value in ret_metrics[keys_ext][keys_int].items()
-                    })
 
-                    # each class table
-                    ret_metrics[keys_ext][keys_int].pop('aAcc', None)
-                    ret_metrics_class[keys_ext][keys_int] = OrderedDict({
-                        # ret_metric: np.round(ret_metric_value * 100, 2)
-                        ret_metric: np.round(ret_metric_value * 100,2)
-                        for ret_metric, ret_metric_value in ret_metrics[keys_ext][keys_int].items()
-                    })
-                    ret_metrics_class[keys_ext][keys_int].update({'Class': class_names})
-                    ret_metrics_class[keys_ext][keys_int].move_to_end('Class', last=False)
+        # summary table
+        ret_metrics_summary = OrderedDict({
+            ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
+            for ret_metric, ret_metric_value in ret_metrics.items()
+        })
 
-                    # for logger
-                    class_table_data = PrettyTable()
-                    for key, val in ret_metrics_class[keys_ext][keys_int].items():
-                        class_table_data.add_column(key, val)
+        # each class table
+        ret_metrics.pop('aAcc', None)
+        ret_metrics_class = OrderedDict({
+            ret_metric: np.round(ret_metric_value * 100, 2)
+            for ret_metric, ret_metric_value in ret_metrics.items()
+        })
+        ret_metrics_class.update({'Class': class_names})
+        ret_metrics_class.move_to_end('Class', last=False)
 
-                    summary_table_data = PrettyTable()
-                    for key, val in ret_metrics_summary[keys_ext][keys_int].items():
-                        if key == 'aAcc':
-                            summary_table_data.add_column(key, [val])
-                        else:
-                            summary_table_data.add_column('m' + key, [val])
+        # for logger
+        class_table_data = PrettyTable()
+        for key, val in ret_metrics_class.items():
+            class_table_data.add_column(key, val)
 
-                    print_log(f'per class {keys_ext+"_"+keys_int} results:', logger)
-                    print_log('\n' + class_table_data.get_string(), logger=logger)
-                    print_log(f'Summary  {keys_ext+"_"+keys_int}:', logger)
-                    print_log('\n' + summary_table_data.get_string(), logger=logger)
-
-                    # each metric dict
-                    eval_results_t = {}
-                    for key, value in ret_metrics_summary[keys_ext][keys_int].items():
-                        if key == 'aAcc':
-                            eval_results_t[key] = value / 100.0
-                        else:
-                            eval_results_t['m' + key] = value / 100.0
-
-                    ret_metrics_class[keys_ext][keys_int].pop('Class', None)
-                    for key, value in ret_metrics_class[keys_ext][keys_int].items():
-                        eval_results_t.update({
-                            key + '.' + str(name): value[idx] / 100.0
-                            for idx, name in enumerate(class_names)
-                        })
-                    eval_results[keys_ext][keys_int]=eval_results_t
+        summary_table_data = PrettyTable()
+        for key, val in ret_metrics_summary.items():
+            if key == 'aAcc':
+                summary_table_data.add_column(key, [val])
             else:
-                # summary table
-                ret_metrics_summary[keys_ext] = OrderedDict({
-                    # ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
-                    ret_metric:  np.round(np.nanmean(ret_metric_value) * 100,2)
-                    for ret_metric, ret_metric_value in ret_metrics[keys_ext].items()
-                })
+                summary_table_data.add_column('m' + key, [val])
 
-                # each class table
-                ret_metrics[keys_ext].pop('aAcc', None)
-                ret_metrics_class[keys_ext] = OrderedDict({
-                    # ret_metric: np.round(ret_metric_value * 100, 2)
-                    ret_metric: np.round(ret_metric_value * 100,2)
-                    for ret_metric, ret_metric_value in ret_metrics[keys_ext].items()
-                })
-                ret_metrics_class[keys_ext].update({'Class': class_names})
-                ret_metrics_class[keys_ext].move_to_end('Class', last=False)
+        print_log('per class results:', logger)
+        print_log('\n' + class_table_data.get_string(), logger=logger)
+        print_log('Summary:', logger)
+        print_log('\n' + summary_table_data.get_string(), logger=logger)
 
-                # for logger
-                class_table_data = PrettyTable()
-                for key, val in ret_metrics_class[keys_ext].items():
-                    class_table_data.add_column(key, val)
+        # each metric dict
+        for key, value in ret_metrics_summary.items():
+            if key == 'aAcc':
+                eval_results[key] = value / 100.0
+            else:
+                eval_results['m' + key] = value / 100.0
 
-                summary_table_data = PrettyTable()
-                for key, val in ret_metrics_summary[keys_ext].items():
-                    if key == 'aAcc':
-                        summary_table_data.add_column(key, [val])
-                    else:
-                        summary_table_data.add_column('m' + key, [val])
-
-                print_log(f'per class {keys_ext} results:', logger)
-                print_log('\n' + class_table_data.get_string(), logger=logger)
-                print_log(f'Summary  {keys_ext}:', logger)
-                print_log('\n' + summary_table_data.get_string(), logger=logger)
-
-                # each metric dict
-                eval_results_t = {}
-                for key, value in ret_metrics_summary[keys_ext].items():
-                    if key == 'aAcc':
-                        eval_results_t[key] = value / 100.0
-                    else:
-                        eval_results_t['m' + key] = value / 100.0
-
-                ret_metrics_class[keys_ext].pop('Class', None)
-                for key, value in ret_metrics_class[keys_ext].items():
-                    eval_results_t.update({
-                        key + '.' + str(name): value[idx] / 100.0
-                        for idx, name in enumerate(class_names)
-                    })
-                eval_results[keys_ext]=eval_results_t
+        ret_metrics_class.pop('Class', None)
+        for key, value in ret_metrics_class.items():
+            eval_results.update({
+                key + '.' + str(name): value[idx] / 100.0
+                for idx, name in enumerate(class_names)
+            })
 
         return eval_results
-    
     def evaluate_old(self,
                  results,
                  metric='mIoU',
