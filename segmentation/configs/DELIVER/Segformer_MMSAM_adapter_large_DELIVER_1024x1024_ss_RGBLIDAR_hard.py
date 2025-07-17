@@ -1,7 +1,7 @@
 # Copyright (c) Shanghai AI Lab. All rights reserved.
 _base_ = [
     '../_base_/models/segformer_mit-b0.py',
-    '../_base_/datasets/DELIVER_MM.py',
+    '../_base_/datasets/DELIVER_MM.py', #DELIVER_MM.py
     '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_40ep.py'
 ]
@@ -13,14 +13,13 @@ log_config = dict(
     ])
 crop_size =(1024,1024)
 checkpoint_conv='https://download.openmmlab.com/mmclassification/v0/convnext/convnext-small_in21k-pre_3rdparty_in1k-384px_20221219-96f0bb87.pth'
-
-mod_dir_tr='samples/event/training',
-mod_dir_val='samples/event/validation',
-mod_dir_test='samples/event/test',
-mod_suffix='_event_front.png',
+mod_dir_tr='samples/lidar/training',
+mod_dir_val='samples/lidar/validation',
+mod_dir_test='samples/lidar/test',
+mod_suffix='_lidar_front.png',
 stride=(640,640)
 img_scale = (1042,1042)
-modalities_name=['rgb','event']
+modalities_name=['rgb','lidar']
 modalities_ch=[3,3]
 
 pretrained = 'pretrained/sam_vit_l_image_encoder_no_neck.pth'
@@ -48,7 +47,7 @@ model = dict(
         deform_num_heads=16,
         cffn_ratio=0.25,
         deform_ratio=0.5,
-        with_cp=True,  # set with_cp=True to save memory
+        with_cp=True, 
         interaction_indexes=[[0, 5], [6, 11], [12, 17], [18, 23]],
         global_attn_indexes= [5, 11, 17, 23],
         window_size=14,
@@ -83,7 +82,7 @@ train_pipeline = [
     dict(type='Normalize_multimodal', **mod_norm_cfg,modalities_name=modalities_name, modalities_ch=modalities_ch, norm_by_max=True),
     dict(type='Pad_multimodal', size=crop_size, pad_val=0, seg_pad_val=255),
     dict(type='DefaultFormatBundle'),
-    dict(type='Collect', keys=['img','gt_semantic_seg'])# 'gt_masks', 'gt_labels'
+    dict(type='Collect', keys=['img','gt_semantic_seg'])
 ]
 
 test_pipeline = [
@@ -105,7 +104,7 @@ optimizer = dict(_delete_=True, type='AdamW', lr=2e-4, betas=(0.9, 0.999), weigh
 lr_config = dict(_delete_=True,
                  policy='poly',
                  warmup='exp',
-                 warmup_iters=10,
+                 warmup_iters=10, 
                  warmup_ratio=0.1,
                  power=0.9,
                  min_lr=0.0, by_epoch=True, warmup_by_epoch=True)
@@ -113,13 +112,18 @@ lr_config = dict(_delete_=True,
 data = dict(samples_per_gpu=1,
             train=dict(pipeline=train_pipeline, mod_dir=mod_dir_tr, mod_suffix=mod_suffix, modalities_name=modalities_name, modalities_ch=modalities_ch),
             val=dict(pipeline=test_pipeline,  mod_dir=mod_dir_val, mod_suffix=mod_suffix, modalities_name=modalities_name, modalities_ch=modalities_ch),
-            test=dict(pipeline=test_pipeline,  mod_dir=mod_dir_test, mod_suffix=mod_suffix, modalities_name=modalities_name, modalities_ch=modalities_ch))
+            test=dict(type='DELIVER_hard',pipeline=test_pipeline,  mod_dir=mod_dir_test, mod_suffix=mod_suffix, modalities_name=modalities_name, modalities_ch=modalities_ch))
 
 
-optimizer_config = dict(type="GradientCumulativeOptimizerHook", cumulative_iters=4) 
+
+optimizer_config = dict(type="GradientCumulativeOptimizerHook", cumulative_iters=4)
 
 runner = dict(type='EpochBasedRunner', max_epochs=100)
 checkpoint_config = dict(by_epoch=True, interval=1, max_keep_ckpts=1)
-custom_hooks_config=[dict(type='DistSamplerSeedHook')]
+custom_hooks_config=[dict(type='DistSamplerSeedHook'),dict(
+        type="EarlyStoppingHook",
+        monitor="mIoU",
+        patience=30,
+        min_delta=0.005)]
 evaluation = dict(start=1, interval=1, by_epoch=True, metric='mIoU', save_best='mIoU', resize_dim=(1024,1024), case=['motionblur', 'overexposure', 'underexposure', 'lidarjitter', 'eventlowres'])
 freeze_backbone = False

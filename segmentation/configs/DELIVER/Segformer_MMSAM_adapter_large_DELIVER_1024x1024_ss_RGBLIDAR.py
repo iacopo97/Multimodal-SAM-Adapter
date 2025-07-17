@@ -120,10 +120,6 @@ optimizer_config = dict(type="GradientCumulativeOptimizerHook", cumulative_iters
 
 runner = dict(type='EpochBasedRunner', max_epochs=100)
 checkpoint_config = dict(by_epoch=True, interval=1, max_keep_ckpts=1)
-custom_hooks_config=[dict(type='DistSamplerSeedHook'),dict(
-        type="EarlyStoppingHook",
-        monitor="mIoU",
-        patience=30,
-        min_delta=0.005)]
+custom_hooks_config=[dict(type='DistSamplerSeedHook')]
 evaluation = dict(start=1, interval=1, by_epoch=True, metric='mIoU', save_best='mIoU', resize_dim=(1024,1024), case=['motionblur', 'overexposure', 'underexposure', 'lidarjitter', 'eventlowres'])
 freeze_backbone = False

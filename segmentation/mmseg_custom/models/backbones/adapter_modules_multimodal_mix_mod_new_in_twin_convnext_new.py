@@ -890,37 +890,7 @@ class SpatialPriorModuleBimodal(nn.Module):
             checkpoint=checkpoint,
             prefix='backbone.'),
                  )
-        # self.stem = nn.Sequential(*[
-        #     nn.Conv2d(in_channels, inplanes, kernel_size=3, stride=2, padding=1, bias=False),
-        #     nn.SyncBatchNorm(inplanes),
-        #     nn.ReLU(inplace=True),
-        #     nn.Conv2d(inplanes, inplanes, kernel_size=3, stride=1, padding=1, bias=False),
-        #     nn.SyncBatchNorm(inplanes),
-        #     nn.ReLU(inplace=True),
-        #     nn.Conv2d(inplanes, inplanes, kernel_size=3, stride=1, padding=1, bias=False),
-        #     nn.SyncBatchNorm(inplanes),
-        #     nn.ReLU(inplace=True),
-        #     nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        # ])
-        # self.stem.apply(self._init_weights)
-        # self.conv2 = nn.Sequential(*[
-        #     nn.Conv2d(inplanes, 2 * inplanes, kernel_size=3, stride=2, padding=1, bias=False),
-        #     nn.SyncBatchNorm(2 * inplanes),
-        #     nn.ReLU(inplace=True)
-        # ])
-        # self.conv2.apply(self._init_weights)
-        # self.conv3 = nn.Sequential(*[
-        #     nn.Conv2d(2 * inplanes, 4 * inplanes, kernel_size=3, stride=2, padding=1, bias=False),
-        #     nn.SyncBatchNorm(4 * inplanes),
-        #     nn.ReLU(inplace=True)
-        # ])
-        # self.conv3.apply(self._init_weights)
-        # self.conv4 = nn.Sequential(*[
-        #     nn.Conv2d(4 * inplanes, 4 * inplanes, kernel_size=3, stride=2, padding=1, bias=False),
-        #     nn.SyncBatchNorm(4 * inplanes),
-        #     nn.ReLU(inplace=True)
-        # ])
-        # self.conv4.apply(self._init_weights)
+        
         self.fc1 = nn.Conv2d(inplanes*4, embed_dim, kernel_size=1, stride=1, padding=0, bias=True)
         self.fc1.apply(self._init_weights)
         self.fc2 = nn.Conv2d(inplanes*8, embed_dim, kernel_size=1, stride=1, padding=0, bias=True)
@@ -929,50 +899,7 @@ class SpatialPriorModuleBimodal(nn.Module):
         self.fc3.apply(self._init_weights)
         self.fc4 = nn.Conv2d(inplanes*32, embed_dim, kernel_size=1, stride=1, padding=0, bias=True)
         self.fc4.apply(self._init_weights)
-        # self.fc1 = nn.Conv2d(96*2, embed_dim, kernel_size=1, stride=1, padding=0, bias=True)
-        # self.fc1.apply(self._init_weights)
-        # self.fc2 = nn.Conv2d(192*2, embed_dim, kernel_size=1, stride=1, padding=0, bias=True)
-        # self.fc2.apply(self._init_weights)
-        # self.fc3 = nn.Conv2d(2*384, embed_dim, kernel_size=1, stride=1, padding=0, bias=True)
-        # self.fc3.apply(self._init_weights)
-        # self.fc4 = nn.Conv2d(768*2, embed_dim, kernel_size=1, stride=1, padding=0, bias=True)
-        # self.fc4.apply(self._init_weights)
-        # self.stem_other_mod = nn.Sequential(*[
-        #     nn.Conv2d(in_channels, inplanes, kernel_size=3, stride=2, padding=1, bias=False),
-        #     nn.SyncBatchNorm(inplanes),
-        #     nn.ReLU(inplace=True),
-        #     nn.Conv2d(inplanes, inplanes, kernel_size=3, stride=1, padding=1, bias=False),
-        #     nn.SyncBatchNorm(inplanes),
-        #     nn.ReLU(inplace=True),
-        #     nn.Conv2d(inplanes, inplanes, kernel_size=3, stride=1, padding=1, bias=False),
-        #     nn.SyncBatchNorm(inplanes),
-        #     nn.ReLU(inplace=True),
-        #     nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        # ])
-        # self.stem_other_mod.apply(self._init_weights)
-        # self.conv2_other_mod = nn.Sequential(*[
-        #     nn.Conv2d(inplanes, 2 * inplanes, kernel_size=3, stride=2, padding=1, bias=False),
-        #     nn.SyncBatchNorm(2 * inplanes),
-        #     nn.ReLU(inplace=True)
-        # ])
-        # self.conv2_other_mod.apply(self._init_weights)
-        # self.conv3_other_mod = nn.Sequential(*[
-        #     nn.Conv2d(2 * inplanes, 4 * inplanes, kernel_size=3, stride=2, padding=1, bias=False),
-        #     nn.SyncBatchNorm(4 * inplanes),
-        #     nn.ReLU(inplace=True)
-        # ])
-        # self.conv3_other_mod.apply(self._init_weights)
-        # self.conv4_other_mod = nn.Sequential(*[
-        #     nn.Conv2d(4 * inplanes, 4 * inplanes, kernel_size=3, stride=2, padding=1, bias=False),
-        #     nn.SyncBatchNorm(4 * inplanes),
-        #     nn.ReLU(inplace=True)
-        # ])
-        # self.conv4_other_mod.apply(self._init_weights)
-        # self.smart_fusion = RoadFormer2Neck(in_channels=[96*2,192*2,2*384,768*2],
-        #          out_channels=[96*2,192*2,2*384,768*2],
-        #          layer = len([96*2,192*2,2*384,768*2]),
-        #          img_scale=(img_size, img_size),
-        #          norm_cfg=dict(type='GN', num_groups=32))
+        
         self.smart_fusion = RoadFormer2Neck(in_channels=[4*inplanes,8*inplanes,16*inplanes,inplanes*32],
                  out_channels=[4*inplanes,8*inplanes,16*inplanes,inplanes*32],
                  layer = len([4*inplanes,8*inplanes,16*inplanes,inplanes*32]),
