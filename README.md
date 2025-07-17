@@ -86,7 +86,7 @@ Install [MMSegmentation v0.20.2](https://github.com/open-mmlab/mmsegmentation/tr
 ```
 cd segmentation
 # recommended environment: torch1.9 + cuda11.1
-conda create -n MMSAMAD python==3.9
+conda create -n MMSAMAD python==3.8
 conda activate MMSAMAD
 pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
 pip install mmcv-full==1.4.2 -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.9.0/index.html
@@ -95,7 +95,6 @@ pip install numpy==1.24.3
 pip install yapf==0.40.1
 pip install mmsegmentation==0.20.2
 pip install tqdm
-pip install "opencv-python<4.9.0"
 pip install "opencv-python<4.9.0"
 pip install setuptools==59.5.0
 pip install tensorboard
@@ -162,17 +161,7 @@ Download pretrained checkpoints for MM SAM-Adapter from the links below and plac
 | MM SAM-Adapter   | ConvNext-S  | 1024      | RGB + LiDAR          |     81.07      | [ckpt](https://drive.google.com/file/d/1QZ31283E10aXymF6VaptmuL7oEvL2irR/view?usp=sharing) |
 | MM SAM-Adapter   | ConvNext-S  | 1024      | RGB + Event          |     79.92      | [ckpt](https://drive.google.com/file/d/1S7BatJmGHWKZo6TGcCn-OS7wHGRiY82B/view?usp=sharing) |
 
-<!-- To finetune networks refer to the example in `scripts/finetune.sh` -->
 
-<!-- ### :rocket: Monocular Virtual Depth Generation
-
-To generate virtual depth from depth networks using our in-paiting strategy refer to the example in `scripts/generate_virtual_depth.sh`
-
-### :rocket: Stereo Proxy Depth Generation
-
-To generate proxy depth maps with our merging strategy to finetune stereo networks you can use `create_proxy_stereo.py`. 
-
-As explained above, we will not release the code for finetuning stereo networks. However, our implementation was based on the official codes of [RAFT-Stereo](https://github.com/princeton-vl/RAFT-Stereo) and [CREStereo](https://github.com/megvii-research/CREStereo). -->
 ## :bar_chart: Quantitative Results
 
 In this section, we present the main quantitative results presented in our paper.
