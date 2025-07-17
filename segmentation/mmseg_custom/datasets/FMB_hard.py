@@ -23,56 +23,15 @@ import random
 
 
 
-# from mmseg.datasets.builder import DATASETS
-# from mmseg.datasets.custom import CustomDataset
-# from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
-# from .pipelines.transform import LoadBinAnn
-# from mmseg.utils import get_root_logger
-# from mmcv.utils import print_log
-# from mmseg.datasets.pipelines import Compose
-# import numpy as np
-# from collections import OrderedDict
-# from prettytable import PrettyTable
-# import os.path as osp
-
-
-
-
-
 # import mmcv
 
 @DATASETS.register_module()
 class FMB_hard(CustomDataset):
-    # """MFNet dataset.
-
-    # num_classes: 9
-    
-    # """
-    # CLASSES = ('unlabeled', 'car', 'person', 'bike', 'curve', 'car_stop', 'guardrail', 'color_cone', 'bump')
-    # PALETTE = [[0,0,0],[64,0,128],[64,64,0],[0,128,192],[0,0,192],[128,128,0],[64,64,128],[192,128,128],[192,64,0]]
-    
     """
     num_classes: 14
     """
     CLASSES = ["Road", "Sidewalk", "Building", "Traffic Light", "Traffic Sign", "Vegetation", "Sky", "Person", "Car", "Truck", "Bus", "Motorcycle", "Bicycle", "Pole"]
 
-    # PALETTE = torch.tensor([
-    #         [70, 70, 70],
-    #         [100, 40, 40],
-    #         [55, 90, 80],
-    #         [220, 20, 60],
-    #         [153, 153, 153],
-    #         [157, 234, 50],
-    #         [128, 64, 128],
-    #         [244, 35, 232],
-    #         [107, 142, 35],
-    #         [0, 0, 142],
-    #         [102, 102, 156],
-    #         [220, 220, 0],
-    #         [70, 130, 180],
-    #         [81, 0, 81],
-    #         # [150, 100, 100],
-    #         ])
     PALETTE = [
         [179, 228, 228], # road
         [181, 57, 133],  # sidewalk
@@ -106,16 +65,8 @@ class FMB_hard(CustomDataset):
                 gt_seg_map_loader_cfg=None,
                 mod_dir=['therm'],
                 mod_suffix=['.png'],
-                # ev_dir=None,
-                # ev_suffix='_event_front.png',
-                # lid_dir=None,
-                # lid_suffix='_lidar_front.png',
-                # depth_dir=None,
-                # depth_suffix='_depth_front.png',
                 modalities_name=None,
                 modalities_ch=None,
-                # z_dir=None,
-                # z_suffix='_Z.tiff',
                 **kwargs):
         self.modalities_name = modalities_name
         self.modalities_ch = modalities_ch
@@ -159,13 +110,8 @@ class FMB_hard(CustomDataset):
                 self.mod_dir_dict=None
                 self.mod_suffix_dict=None
 
-        # load annotations
-        # if len(modalities_name)>1:
         self.img_infos = self.load_annotations_modalities(self.img_dir, self.img_suffix, self.mod_dir_dict, self.mod_suffix_dict, self.modalities_name,
                                                 self.ann_dir,self.seg_map_suffix, self.split)
-        # else:
-        #     self.img_infos = self.load_annotations(self.img_dir, self.img_suffix, self.ann_dir,
-        #                                         self.seg_map_suffix, self.split)
 
     def pre_pipeline(self, results):
         """Prepare results dict for pipeline."""
@@ -175,24 +121,9 @@ class FMB_hard(CustomDataset):
         if len(self.modalities_name)>1:
             for i in range(1,len(self.modalities_name)):
                 results[f"{self.modalities_name[i]}_prefix"] = self.mod_dir_dict[f"{self.modalities_name[i]}_dir"]
-            # results['event_prefix'] = self.ev_dir
-            # results['lidar_prefix'] = self.lid_dir
-            # results['depth_prefix'] = self.depth_dir
         if self.custom_classes:
             results['label_map'] = self.label_map 
     
-    # def _get_file_names(self, split):
-    #     assert split in ['train', 'val']
-    #     source = os.path.join(self.root, 'test.txt') if split == 'val' else os.path.join(self.root, 'train.txt')
-    #     file_names = []
-    #     with open(source) as f:
-    #         files = f.readlines()
-    #     for item in files:
-    #         file_name = item.strip()
-    #         if ' ' in file_name:
-    #             file_name = file_name.split(' ')[0]
-    #         file_names.append(file_name)
-    #     return file_names
     
     def load_annotations_modalities(self, img_dir, img_suffix,mod_dir_dict, mod_suffix_dict,modalities_name, ann_dir, seg_map_suffix,
                          split):
@@ -213,22 +144,6 @@ class FMB_hard(CustomDataset):
 
         img_infos = []
         if split is not None:
-            # assert split in ['train', 'val']
-            # source = os.path.join(self.data_root, 'test.txt') if split == 'val' else os.path.join(self.data_root, 'train.txt')
-            # with open(source) as f:
-            #     for line in f:
-            #         img_name = line.strip()
-            #         img_info = dict(filename=img_name + img_suffix)
-            #         if ann_dir is not None:
-            #             seg_map = img_name + seg_map_suffix
-            #             img_info['ann'] = dict(seg_map=seg_map)
-            #         if len(modalities_name)>1:
-            #             for i in range(1,len(modalities_name)):
-            #                 if mod_dir_dict[f"{modalities_name[i]}_dir"] is not None:
-            #                     mod_file = img_name + mod_suffix_dict[f"{modalities_name[i]}_suffix"]
-            #                     img_info[modalities_name[i]] = dict({f"{modalities_name[i]}_file":mod_file})
-
-            #         img_infos.append(img_info)
             assert split in ['train', 'val','test']
             if split == 'test':
                 # source_easy = osp.join(self.data_root,split,'Visible', 'test_easy_files.txt')
@@ -242,22 +157,14 @@ class FMB_hard(CustomDataset):
                 # source_easy = osp.join(self.data_root,split,'Visible', 'train_easy_files.txt')
                 source_hard = osp.join(self.data_root,split,'Visible', 'train_hard_files.txt')
                 # files = [f.readlines() for f in [opsource_easy,source_hard]]
-            # with open(source_easy) as f:
-                # files_easy=f.readlines()
-                # files_easy = ['easy/' + file for file in files_easy]
             with open(source_hard) as f:
                 files_hard=f.readlines()
                 files_hard = ['hard/' + file for file in files_hard]
-            # files=files_hard+files_easy
-            # files=files_easy
             files=files_hard
             # random.shuffle(files)
                 # img_names =[]
             for line in files:
                 img_name = line.strip()
-                # if '\t' in img_name:
-                #     img_name = img_name.split('\t')[0].split('/')[-1]
-                # img_names.append(img_name)
                 img_info = dict(filename=img_name)#+img_suffix
                 if ann_dir is not None:
                     # seg_map = img_name.replace(img_dir.split('/')[-1],ann_dir.split('/')[-1]).replace(img_suffix,seg_map_suffix)
@@ -385,12 +292,11 @@ class FMB_hard(CustomDataset):
 
         eval_results = {}
         # test a list of files
-        num_classes = len(self.CLASSES)
         if mmcv.is_list_of(results, np.ndarray) or mmcv.is_list_of(
                 results, str):
             if gt_seg_maps is None:
                 gt_seg_maps = self.get_gt_seg_maps()
-            # num_classes = len(self.CLASSES)
+            num_classes = len(self.CLASSES)
             ret_metrics = eval_metrics(
                 results,
                 gt_seg_maps,
@@ -401,123 +307,62 @@ class FMB_hard(CustomDataset):
                 reduce_zero_label=self.reduce_zero_label)
         # test a list of pre_eval_results
         else:
-            ret_metrics = pre_eval_to_metrics_dict(results, metric, nan_to_num=0, num_classes=num_classes)
-        
+            ret_metrics = pre_eval_to_metrics(results, metric, nan_to_num=0)#, nan_to_num=0
+
         # Because dataset.CLASSES is required for per-eval.
         if self.CLASSES is None:
             class_names = tuple(range(num_classes))
         else:
             class_names = self.CLASSES
-        ret_metrics_summary={}
-        ret_metrics_class={}
-        for keys_ext in ret_metrics.keys():
-            # ret_metrics_t=ret_metrics[keys_ext]
-            ret_metrics_summary[keys_ext]={}
-            ret_metrics_class[keys_ext]={}
-            eval_results[keys_ext]={}
-            if keys_ext!='global':   
-                for keys_int in ret_metrics[keys_ext].keys():
-                    # summary table
-                    ret_metrics_summary[keys_ext][keys_int] = OrderedDict({
-                        # ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
-                        ret_metric:  np.round(np.nanmean(ret_metric_value) * 100,2)
-                        for ret_metric, ret_metric_value in ret_metrics[keys_ext][keys_int].items()
-                    })
 
-                    # each class table
-                    ret_metrics[keys_ext][keys_int].pop('aAcc', None)
-                    ret_metrics_class[keys_ext][keys_int] = OrderedDict({
-                        # ret_metric: np.round(ret_metric_value * 100, 2)
-                        ret_metric: np.round(ret_metric_value * 100,2)
-                        for ret_metric, ret_metric_value in ret_metrics[keys_ext][keys_int].items()
-                    })
-                    ret_metrics_class[keys_ext][keys_int].update({'Class': class_names})
-                    ret_metrics_class[keys_ext][keys_int].move_to_end('Class', last=False)
+        # summary table
+        ret_metrics_summary = OrderedDict({
+            ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
+            for ret_metric, ret_metric_value in ret_metrics.items()
+        })
 
-                    # for logger
-                    class_table_data = PrettyTable()
-                    for key, val in ret_metrics_class[keys_ext][keys_int].items():
-                        class_table_data.add_column(key, val)
+        # each class table
+        ret_metrics.pop('aAcc', None)
+        ret_metrics_class = OrderedDict({
+            ret_metric: np.round(ret_metric_value * 100, 2)
+            for ret_metric, ret_metric_value in ret_metrics.items()
+        })
+        ret_metrics_class.update({'Class': class_names})
+        ret_metrics_class.move_to_end('Class', last=False)
 
-                    summary_table_data = PrettyTable()
-                    for key, val in ret_metrics_summary[keys_ext][keys_int].items():
-                        if key == 'aAcc':
-                            summary_table_data.add_column(key, [val])
-                        else:
-                            summary_table_data.add_column('m' + key, [val])
+        # for logger
+        class_table_data = PrettyTable()
+        for key, val in ret_metrics_class.items():
+            class_table_data.add_column(key, val)
 
-                    print_log(f'per class {keys_ext+"_"+keys_int} results:', logger)
-                    print_log('\n' + class_table_data.get_string(), logger=logger)
-                    print_log(f'Summary  {keys_ext+"_"+keys_int}:', logger)
-                    print_log('\n' + summary_table_data.get_string(), logger=logger)
-
-                    # each metric dict
-                    eval_results_t = {}
-                    for key, value in ret_metrics_summary[keys_ext][keys_int].items():
-                        if key == 'aAcc':
-                            eval_results_t[key] = value / 100.0
-                        else:
-                            eval_results_t['m' + key] = value / 100.0
-
-                    ret_metrics_class[keys_ext][keys_int].pop('Class', None)
-                    for key, value in ret_metrics_class[keys_ext][keys_int].items():
-                        eval_results_t.update({
-                            key + '.' + str(name): value[idx] / 100.0
-                            for idx, name in enumerate(class_names)
-                        })
-                    eval_results[keys_ext][keys_int]=eval_results_t
+        summary_table_data = PrettyTable()
+        for key, val in ret_metrics_summary.items():
+            if key == 'aAcc':
+                summary_table_data.add_column(key, [val])
             else:
-                # summary table
-                ret_metrics_summary[keys_ext] = OrderedDict({
-                    # ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
-                    ret_metric:  np.round(np.nanmean(ret_metric_value) * 100,2)
-                    for ret_metric, ret_metric_value in ret_metrics[keys_ext].items()
-                })
+                summary_table_data.add_column('m' + key, [val])
 
-                # each class table
-                ret_metrics[keys_ext].pop('aAcc', None)
-                ret_metrics_class[keys_ext] = OrderedDict({
-                    # ret_metric: np.round(ret_metric_value * 100, 2)
-                    ret_metric: np.round(ret_metric_value * 100,2)
-                    for ret_metric, ret_metric_value in ret_metrics[keys_ext].items()
-                })
-                ret_metrics_class[keys_ext].update({'Class': class_names})
-                ret_metrics_class[keys_ext].move_to_end('Class', last=False)
+        print_log('per class results:', logger)
+        print_log('\n' + class_table_data.get_string(), logger=logger)
+        print_log('Summary:', logger)
+        print_log('\n' + summary_table_data.get_string(), logger=logger)
 
-                # for logger
-                class_table_data = PrettyTable()
-                for key, val in ret_metrics_class[keys_ext].items():
-                    class_table_data.add_column(key, val)
+        # each metric dict
+        for key, value in ret_metrics_summary.items():
+            if key == 'aAcc':
+                eval_results[key] = value / 100.0
+            else:
+                eval_results['m' + key] = value / 100.0
 
-                summary_table_data = PrettyTable()
-                for key, val in ret_metrics_summary[keys_ext].items():
-                    if key == 'aAcc':
-                        summary_table_data.add_column(key, [val])
-                    else:
-                        summary_table_data.add_column('m' + key, [val])
-
-                print_log(f'per class {keys_ext} results:', logger)
-                print_log('\n' + class_table_data.get_string(), logger=logger)
-                print_log(f'Summary  {keys_ext}:', logger)
-                print_log('\n' + summary_table_data.get_string(), logger=logger)
-
-                # each metric dict
-                eval_results_t = {}
-                for key, value in ret_metrics_summary[keys_ext].items():
-                    if key == 'aAcc':
-                        eval_results_t[key] = value / 100.0
-                    else:
-                        eval_results_t['m' + key] = value / 100.0
-
-                ret_metrics_class[keys_ext].pop('Class', None)
-                for key, value in ret_metrics_class[keys_ext].items():
-                    eval_results_t.update({
-                        key + '.' + str(name): value[idx] / 100.0
-                        for idx, name in enumerate(class_names)
-                    })
-                eval_results[keys_ext]=eval_results_t
+        ret_metrics_class.pop('Class', None)
+        for key, value in ret_metrics_class.items():
+            eval_results.update({
+                key + '.' + str(name): value[idx] / 100.0
+                for idx, name in enumerate(class_names)
+            })
 
         return eval_results
+    
     
     def evaluate_old(self,
                  results,

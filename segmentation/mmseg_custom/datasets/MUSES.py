@@ -22,59 +22,13 @@ import mmcv
 from mmseg_custom.apis.evaluation import pre_eval_to_metrics_dict
 
 
-# from mmseg.datasets.builder import DATASETS
-# from mmseg.datasets.custom import CustomDataset
-# from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
-# from .pipelines.transform import LoadBinAnn
-# from mmseg.utils import get_root_logger
-# from mmcv.utils import print_log
-# from mmseg.datasets.pipelines import Compose
-# import numpy as np
-# from collections import OrderedDict
-# from prettytable import PrettyTable
-# import os.path as osp
-
-
-
-
-
-# import mmcv
 
 @DATASETS.register_module()
 class MUSES(CustomDataset):
     """MUSES dataset.
     """
     
-    # CLASSES = ("Building", "Fence", "Other", "Pedestrian", "Pole", "RoadLine", "Road", "SideWalk", "Vegetation", 
-    #             "Cars", "Wall", "TrafficSign", "Sky", "Ground", "Bridge", "RailTrack", "GroundRail", 
-    #             "TrafficLight", "Static", "Dynamic", "Water", "Terrain", "TwoWheeler", "Bus", "Truck")
-
-    # PALETTE = [[70, 70, 70],
-    #         [100, 40, 40],#Fence
-    #         [55, 90, 80],#other
-    #         [220, 20, 60],#pedestrian
-    #         [153, 153, 153],
-    #         [157, 234, 50],
-    #         [128, 64, 128],
-    #         [244, 35, 232],
-    #         [107, 142, 35],
-    #         [0, 0, 142],#Cars
-    #         [102, 102, 156],
-    #         [220, 220, 0],
-    #         [70, 130, 180],
-    #         [81, 0, 81],#Ground
-    #         [150, 100, 100],#Bridge
-    #         [230, 150, 140],#Railtrack
-    #         [180, 165, 180],#Groundrail
-    #         [250, 170, 30],#Trafficlight
-    #         [110, 190, 160],
-    #         [170, 120, 50],
-    #         [45, 60, 150],
-    #         [145, 170, 100],
-    #         [  0,  0, 230], 
-    #         [  0, 60, 100],
-    #         [  0,  0, 70],
-    #         ]
+    
     CLASSES = ('road', 'sidewalk', 'building', 'wall', 'fence', 'pole',
                'traffic light', 'traffic sign', 'vegetation', 'terrain', 'sky',
                'person', 'rider', 'car', 'truck', 'bus', 'train', 'motorcycle',
@@ -103,32 +57,12 @@ class MUSES(CustomDataset):
                 gt_seg_map_loader_cfg=None,
                 mod_dir=['projected_to_rgb/event_camera/train','projected_to_rgb/lidar/train'],
                 mod_suffix=['_event_camera.npz','_lidar.npz'],
-                # ev_dir=None,
-                # ev_suffix='_event_front.png',
-                # lid_dir=None,
-                # lid_suffix='_lidar_front.png',
-                # depth_dir=None,
-                # depth_suffix='_depth_front.png',
                 modalities_name=None,
                 modalities_ch=None,
-                # z_dir=None,
-                # z_suffix='_Z.tiff',
                 cases=['clear','rain','fog','snow'],
                 conditions=['day','night'],
                 **kwargs):
-        # super(SYNTHIA_multimodal, self).__init__(
-        #     img_suffix='.png',
-        #     seg_map_suffix='.png',
-        #     reduce_zero_label=False,
-        #     ignore_index=None,
-        #     **kwargs)
-        # join paths if data_root is specified
-        # self.ev_dir = ev_dir
-        # self.ev_suffix = ev_suffix
-        # self.lid_dir = lid_dir
-        # self.lid_suffix = lid_suffix
-        # self.depth_dir = depth_dir
-        # self.depth_suffix = depth_suffix
+       
         self.cases=cases
         self.conditions=conditions 
         self.modalities_name = modalities_name
@@ -188,9 +122,6 @@ class MUSES(CustomDataset):
         if len(self.modalities_name)>1:
             for i in range(1,len(self.modalities_name)):
                 results[f"{self.modalities_name[i]}_prefix"] = self.mod_dir_dict[f"{self.modalities_name[i]}_dir"]
-            # results['event_prefix'] = self.ev_dir
-            # results['lidar_prefix'] = self.lid_dir
-            # results['depth_prefix'] = self.depth_dir
         if self.custom_classes:
             results['label_map'] = self.label_map 
     def format_results(self, results, out_file, imgfile_prefix, indices=None, **kwargs):
