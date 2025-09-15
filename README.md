@@ -2,9 +2,14 @@
 
 <h1 align="center"> Multimodal SAM-Adapter for Semantic Segmentation </h1> 
 
+<p align="center">
+  <a href="https://arxiv.org/abs/2509.10408">
+    <img src="https://img.shields.io/badge/arXiv-2509.10408-b31b1b.svg" alt="arXiv">
+  </a>
+</p>
 
 <br>
-:rotating_light: This repository contains download links to dataset, code snippets, and trained deep models of our work  "Multimodal SAM-Adapter for Semantic Segmentation"[![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/2509.10408).
+:rotating_light: This repository contains download links to dataset, code snippets, and trained deep models of our work  "Multimodal SAM-Adapter for Semantic Segmentation"
 , 
  
 by [Iacopo Curti*](https://www.unibo.it/sitoweb/iacopo.curti2), [Pierluigi Zama Ramirez*](https://pierlui92.github.io/), Alioscia Petrelli*
