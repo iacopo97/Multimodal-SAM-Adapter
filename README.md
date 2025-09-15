@@ -4,7 +4,8 @@
 
 
 <br>
-:rotating_light: This repository contains download links to dataset, code snippets, and trained deep models of our work  "Multimodal SAM-Adapter for Semantic Segmentation", 
+:rotating_light: This repository contains download links to dataset, code snippets, and trained deep models of our work  "Multimodal SAM-Adapter for Semantic Segmentation"[arXiv](https://arxiv.org/abs/2509.10408).
+, 
  
 by [Iacopo Curti*](https://www.unibo.it/sitoweb/iacopo.curti2), [Pierluigi Zama Ramirez*](https://pierlui92.github.io/), Alioscia Petrelli*
 , and [Luigi Di Stefano*](https://www.unibo.it/sitoweb/luigi.distefano).  \* _Equal Contribution_
