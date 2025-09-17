@@ -3,11 +3,11 @@
 <h1 align="center"> Multimodal SAM-Adapter for Semantic Segmentation </h1> 
 
 <p align="center">
+    <a href="https://ieeexplore.ieee.org/document/11162503">
+    <img src="https://img.shields.io/badge/IEEE%20OpenAccess-View-blue.svg" alt="IEEE Open Access">
+  </a>
   <a href="https://arxiv.org/abs/2509.10408">
     <img src="https://img.shields.io/badge/arXiv-2509.10408-b31b1b.svg" alt="arXiv">
-  </a>
-  <a href="https://ieeexplore.ieee.org/document/11162503">
-    <img src="https://img.shields.io/badge/IEEE%20OpenAccess-View-blue.svg" alt="IEEE Open Access">
   </a>
 </p>
 
